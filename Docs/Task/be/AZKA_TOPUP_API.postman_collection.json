@@ -1,0 +1,411 @@
+{
+  "info": {
+    "name": "AZKA TOP UP API",
+    "description": "Complete API collection for AZKA TOP UP backend testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "order_code", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "🟢 Public — Games",
+      "item": [
+        {
+          "name": "GET All Games",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/games",
+            "description": "Ambil semua game aktif"
+          }
+        },
+        {
+          "name": "GET Game Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/games/mobile-legends"
+          }
+        },
+        {
+          "name": "GET Products by Game",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/games/mobile-legends/products"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔐 Auth — Customer",
+      "item": [
+        {
+          "name": "POST Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "  console.log('Token saved:', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Azka Test\",\n  \"email\": \"azka@test.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "  console.log('Token saved:', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"azka@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/logout",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛒 Orders — Customer",
+      "item": [
+        {
+          "name": "POST Create Order (Mobile Legends)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('order_code', res.data.order_code);",
+                  "  console.log('Order code saved:', res.data.order_code);",
+                  "  console.log('Snap token:', res.data.midtrans_snap_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/orders",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": 1,\n  \"customer_no\": \"12345678\",\n  \"zone_id\": \"1234\",\n  \"email\": \"azka@test.com\",\n  \"phone\": \"08123456789\"\n}"
+            },
+            "description": "product_id: 1 = 8 Diamonds ML. Ganti sesuai produk yang ada di DB."
+          }
+        },
+        {
+          "name": "GET Order Status",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/orders/{{order_code}}",
+            "header": [{ "key": "Accept", "value": "application/json" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Profile — Customer",
+      "item": [
+        {
+          "name": "GET My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/profile",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "GET My Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/profile/orders",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔒 Auth — Admin",
+      "item": [
+        {
+          "name": "POST Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const res = pm.response.json();",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "  console.log('Admin token saved:', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@azkatopup.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET Admin Me",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/me",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Admin — Products",
+      "item": [
+        {
+          "name": "GET All Products (paginated)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/products?per_page=10",
+              "query": [{ "key": "per_page", "value": "10" }]
+            },
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "PUT Update Product Markup",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/admin/products/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"markup_type\": \"flat\",\n  \"markup_value\": 1000,\n  \"is_active\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT Bulk Toggle Status",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/admin/products/bulk-status",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_ids\": [1, 2, 3],\n  \"is_active\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "POST Sync Products from Digiflazz",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/products/sync",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "description": "Fetch pricelist dari Digiflazz dan upsert ke database"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Admin — Orders",
+      "item": [
+        {
+          "name": "GET All Orders (filtered)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/admin/orders?per_page=10",
+              "query": [
+                { "key": "per_page", "value": "10" },
+                { "key": "payment_status", "value": "pending", "disabled": true },
+                { "key": "topup_status", "value": "failed", "disabled": true }
+              ]
+            },
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "GET Order Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/orders/1",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "POST Retry Topup",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/orders/1/retry",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "POST Flag Refund",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/orders/1/flag-refund",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refund_notes\": \"Customer request refund, topup gagal berulang kali.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET Digiflazz Balance",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/balance",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Admin — Settings",
+      "item": [
+        {
+          "name": "GET All Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/settings",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "PUT Update Setting (single key)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/admin/settings/site_name",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": \"AZKA TOP UP v2\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔗 Webhooks (Simulasi)",
+      "item": [
+        {
+          "name": "POST Midtrans Webhook (payment settlement)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/webhook/midtrans",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"{{order_code}}\",\n  \"status_code\": \"200\",\n  \"gross_amount\": \"2500.00\",\n  \"transaction_status\": \"settlement\",\n  \"fraud_status\": \"accept\",\n  \"signature_key\": \"GENERATE_VIA_SHA512_FIRST\"\n}",
+              "description": "⚠️ signature_key harus di-generate manual: SHA512(order_id + status_code + gross_amount + server_key)"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
