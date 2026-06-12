@@ -104,5 +104,3 @@ php artisan test
 ## 📝 Kontak & Kontribusi
 
 Dikembangkan oleh **Azka** (azka13labib-ops). 
-
-Untuk detail pengerjaan per fase, silakan rujuk berkas dokumentasi di folder `Docs/Task/`.
